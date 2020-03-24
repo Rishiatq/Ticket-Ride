@@ -1,0 +1,53 @@
+class Node:
+    def __init__(self,a,b):
+        self.v=a;
+        self.val=b
+n=int(input())
+#adjacency list representation of graph
+path=dict()
+cost=dict()
+#visit[i] will be 0 if the vertex is not yet visited
+visit=[]
+for i in range(n):
+    path[i]=[]
+    cost[i]=[]
+    visit.append(0)
+for i in range(n-1):
+    a,b,c=input().split()
+    a=int(a)
+    b=int(b)
+    c=int(c)
+    path[a-1].append(Node(b-1,c))
+    path[b-1].append(Node(a-1,c))
+m=int(input())
+for i in range(m):
+    a,b,c=input().split()
+    a=int(a)
+    b=int(b)
+    c=int(c)
+    cost[a-1].append(Node(b-1,c))
+    if a!=b:
+        cost[b-1].append(Node(a-1,c))
+ans=0
+def dfs(cur,st,sd):
+    global ans,path,cost
+    #compare the current st-sd with the prev max value
+    if st-sd>ans:
+        ans=st-sd
+    #traverse each vertex which can be reached from the cur vertex
+    for i in range(len(path[cur])):
+        u=path[cur][i].v
+        if visit[u]==0:     #if vertex u is not visited
+            temp=0
+            visit[u]=1      #mark as visited
+            for j in range(len(cost[u])):
+                if visit[cost[u][j].v]==1:
+                    temp+=cost[u][j].val        #add the cost of all tickets if the other edge is also visited
+            dfs(u,st+temp,sd+path[cur][i].val)  #recur to the next node
+            visit[u]=0
+
+for i in range(n):
+    visit[i]=1
+    dfs(i,0,0)
+    visit[i]=0
+print(ans)
